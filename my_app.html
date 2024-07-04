@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bulb Control</title>
+    <style>
+      /* Basic styling */
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #f2f2f2;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 50px;
+      }
+      .bulb-container {
+        margin: 20px;
+      }
+      .bulb {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: #ccc;
+        margin-bottom: 20px;
+        transition: background-color 0.3s ease;
+      }
+      .bulb.on {
+        background-color: #ffff00; /* Yellow color for on state */
+      }
+      .bulb.off {
+        background-color: #666; /* Dark gray color for off state */
+      }
+      .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+      .button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+        width: 100px;
+        transition: background-color 0.3s ease;
+      }
+      .button.on {
+        background-color: #4caf50; /* Green color for on button */
+      }
+      .button.off {
+        background-color: #ff5733; /* Red color for off button */
+      }
+      .button.on:hover {
+        background-color: #388e3c; /* Darker green when hovering for LED ON button */
+      }
+      .button.off:hover {
+        background-color: #c62828; /* Darker red when hovering for LED OFF button */
+      }
+      .button:hover {
+        opacity: 0.8;
+      }
+      h1 {
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Bulb Control</h1>
+    <form id="bulbForm">
+      <div class="container">
+        <div class="bulb-container">
+          <div class="bulb" id="1"></div>
+          <div class="button-container">
+            <button
+              type="button"
+              class="button on"
+              onclick="submitForm('1', true)"
+            >
+              LED ON
+            </button>
+            <button
+              type="button"
+              class="button off"
+              onclick="submitForm('1', false)"
+            >
+              LED OFF
+            </button>
+          </div>
+        </div>
+        <div class="bulb-container">
+          <div class="bulb" id="2"></div>
+          <div class="button-container">
+            <button
+              type="button"
+              class="button on"
+              onclick="submitForm('2', true)"
+            >
+              LED ON
+            </button>
+            <button
+              type="button"
+              class="button off"
+              onclick="submitForm('2', false)"
+            >
+              LED OFF
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <script>
+      // Function to update bulb state visually
+      function updateBulbState(bulbId, state) {
+        const bulbElement = document.getElementById(bulbId);
+        if (state) {
+          bulbElement.classList.add("on");
+          bulbElement.classList.remove("off");
+        } else {
+          bulbElement.classList.add("off");
+          bulbElement.classList.remove("on");
+        }
+      }
+
+      // Function to submit form data
+      function submitForm(bulbId, state) {
+        const formData = new FormData();
+        formData.append(bulbId, state ? "1" : "0"); // Convert boolean to "1" or "0"
+        fetch("submit.php", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              alert(data.message); // Show success message as an alert
+              updateBulbState(bulbId, state); // Update bulb state visually if database update was successful
+            } else {
+              alert(data.message); // Show error message as an alert
+            }
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+    </script>
+  </body>
+</html>
